@@ -1,0 +1,46 @@
+<header class="bg-white shadow-sm">
+    <div class="container py-4">
+      <div class="flex justify-between items-center">
+        <!-- Logo -->
+        <a routerLink="/" class="flex items-center space-x-2">
+          <ion-icon name="calendar-outline" class="h-8 w-8 text-primary"></ion-icon>
+          <span class="text-xl font-bold text-gray-800">poaEvent</span>
+        </a>
+  
+        <!-- Navigation -->
+        <nav class="flex items-center space-x-6">
+          <a [routerLink]="['/']" routerLinkActive="router-link-active"  class="text-gray-700 hover:text-primary transition-colors">Accueil</a>
+  
+          <!-- Dynamic navigation based on auth state -->
+          <ng-container *ngIf="!authService.isAuthenticated()">
+            <a [routerLink]="['/login']" routerLinkActive="router-link-active"  class="text-gray-700 hover:text-primary transition-colors">Connexion</a>
+            <a [routerLink]="['/register']" routerLinkActive="router-link-active"  class="text-gray-700 hover:text-primary transition-colors">Inscription</a>
+          </ng-container>
+  
+          <ng-container *ngIf="authService.isAuthenticated() && authService.getRole() === 'admin'">
+            <a [routerLink]="['/admin']" routerLinkActive="router-link-active" class="text-gray-700 hover:text-primary transition-colors">Gérer événements</a>
+            <a (click)="navigateToReservations()" class="text-gray-700 hover:text-primary transition-colors">Réservations</a>
+          </ng-container>
+  
+          <ng-container *ngIf="authService.isAuthenticated() && authService.getRole() === 'client'">
+            <a (click)="navigateToClientEvents()" class="text-gray-700 hover:text-primary transition-colors">Événements</a>
+            <a (click)="navigateToReservations()" class="text-gray-700 hover:text-primary transition-colors">Mes réservations</a>
+          </ng-container>
+  
+          <!-- User controls -->
+          <ng-container *ngIf="authService.isAuthenticated()">
+            <div class="flex items-center space-x-3">
+              <div class="text-sm text-gray-600 flex items-center">
+                <ion-icon name="person-circle-outline" class="h-4 w-4 mr-1"></ion-icon>
+                <span>{{ authService.getUserName() }}</span>
+              </div>
+              <button (click)="logout()" title="Déconnexion" class="bg-transparent border-none cursor-pointer">
+                <ion-icon name="log-out-outline" class="h-4 w-4 text-gray-600"></ion-icon>
+              </button>
+            </div>
+          </ng-container>
+        </nav>
+      </div>
+    </div>
+  </header>
+  

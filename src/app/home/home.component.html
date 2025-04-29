@@ -1,0 +1,84 @@
+<!-- Hero Section -->
+<section class="bg-gradient-to-r from-[#A03473] to-[#88175a]  text-white py-20">
+    <div class="poa-container max-w-4xl mx-auto px-4">
+      <h1 class="text-4xl md:text-5xl font-bold mb-6">
+        Découvrez et réservez des événements gratuitement
+      </h1>
+      <p class="text-xl mb-8">
+        poaEvent vous permet de trouver et réserver des événements gratuits ou de créer vos propres événements.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4">
+        <button (click)="handleCreateEvent()"
+          class="bg-white text-[#A03473] hover:bg-gray-100 px-6 py-3 rounded text-lg font-semibold flex items-center justify-center">
+          <ion-icon name="add-circle-outline" class="bi bi-plus-circle me-2"></ion-icon> Créer un événement
+        </button>
+        <button [routerLink]="['/events']" routerLinkActive="router-link-active"
+          class="bg-transparent border border-white text-white hover:bg-white/10 px-6 py-3 rounded text-lg font-semibold flex items-center justify-center">
+          <ion-icon name="ticket-outline" class="bi bi-ticket me-2"></ion-icon> Réserver un événement
+        </button>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Événements à venir -->
+  <section class="py-16">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-3xl font-bold">Événements à venir</h2>
+        <button [routerLink]="['/events']" routerLinkActive="router-link-active"
+          class="flex items-center gap-2 text-primary hover:text-white hover:bg-[#A03473] transition px-4 py-2 rounded-lg"
+        >
+          <ion-icon name="arrow-forward-circle-outline" class="text-xl"></ion-icon>
+          Voir tous
+        </button>
+      </div>
+  
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <app-event *ngFor="let event of latestEvents" [event]="event"></app-event>
+      </div>
+    </div>
+  </section>
+  
+  
+  
+  <!-- Comment ça marche -->
+  <section class="py-16 bg-gray-50">
+    <div class="poa-container max-w-6xl mx-auto px-4 text-center">
+      <h2 class="text-3xl font-bold mb-12">Comment ça marche</h2>
+  
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <ion-icon name="search-outline" class="bi bi-calendar-event text-2xl text-[#A03473]"></ion-icon>
+          </div>
+          <h3 class="text-xl font-semibold mb-3">Trouvez un événement</h3>
+          <p class="text-gray-600">
+            Parcourez notre sélection d'événements gratuits près de chez vous.
+          </p>
+        </div>
+  
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <ion-icon name="checkmark-circle-outline" class="bi bi-ticket-perforated text-2xl text-[#A03473]"></ion-icon>
+          </div>
+          <h3 class="text-xl font-semibold mb-3">Réservez votre place</h3>
+          <p class="text-gray-600">
+            Réservez gratuitement et recevez votre confirmation par email.
+          </p>
+        </div>
+  
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <ion-icon name="add-outline" class="text-2xl text-[#A03473]"></ion-icon>
+          </div>
+          <h3 class="text-xl font-semibold mb-3">Créez vos événements</h3>
+          <p class="text-gray-600">
+            Organisez vos propres événements et gérez vos réservations.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <app-footer></app-footer>
+  

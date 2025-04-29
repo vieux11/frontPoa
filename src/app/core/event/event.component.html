@@ -1,0 +1,52 @@
+<div class="h-full flex flex-col overflow-hidden bg-white border border-gray-200 rounded-2xl shadow-sm">
+    <!-- Image -->
+    <div class="relative h-48 overflow-hidden">
+      <img
+        [src]="event.image"
+        [alt]="event.title"
+        class="w-full h-full object-cover transition-transform hover:scale-105 duration-300"
+      />
+      <div class="absolute top-2 right-2">
+        <span class="bg-black/70 text-white text-xs px-2 py-1 rounded">
+          {{ remainingSeats() }} places restantes
+        </span>
+      </div>
+    </div>
+  
+    <!-- Titre et description -->
+    <div class="p-4">
+      <h3 class="text-xl font-semibold text-gray-900">{{ event.title }}</h3>
+      <p class="text-sm text-gray-600 line-clamp-2">{{ event.description }}</p>
+    </div>
+  
+    <!-- Détails -->
+    <div class="px-4 flex-grow space-y-2 text-sm text-gray-600">
+      <div class="flex items-center">
+        <ion-icon name="calendar-outline" class="text-[#A03473] mr-2 text-base"></ion-icon>
+        {{ event.eventDate | date: 'dd/MM/yyyy' }}
+      </div>
+      <div class="flex items-center">
+        <ion-icon name="time-outline" class="text-[#A03473] mr-2 text-base"></ion-icon>
+        {{ event.heure | date: 'hh:mm' }}
+      </div>
+      <div class="flex items-center">
+        <ion-icon name="location-outline" class="text-[#A03473] mr-2 text-base"></ion-icon>
+        {{ event.location }}
+      </div>
+      <div class="flex items-center">
+        <ion-icon name="people-outline" class="text-[#A03473] mr-2 text-base"></ion-icon>
+        {{ event.maxParticipants }} personnes max
+      </div>
+    </div>
+  
+    <!-- Bouton -->
+    <div class="p-4 pt-2">
+      <button
+        class="w-full bg-[#A03473] text-white py-2 px-4 rounded-xl hover:bg-[#861f5d] transition"
+        (click)="goToDetails()"
+      >
+        Réserver
+      </button>
+    </div>
+  </div>
+  
