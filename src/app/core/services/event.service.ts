@@ -8,7 +8,7 @@ import { EventType } from '../../models/event';
 })
 export class EventService {
 
-  private baseUrl = 'http://localhost:3333' //  backend
+  private baseUrl = 'https://poaevent-back.onrender.com' //  backend
  
 
 
