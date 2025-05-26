@@ -1,29 +1,44 @@
 <!-- Bannière avec barre de recherche -->
 <section class="bg-gradient-to-r from-[#A03473] to-[#88175a] text-white py-12">
-    <div class="poa-container max-w-4xl mx-auto px-4 text-center">
-      <h1 class="text-3xl md:text-4xl font-bold mb-4">Tous les événements</h1>
-      <p class="text-lg mb-6">Recherchez et explorez tous les événements disponibles gratuitement</p>
-      <div class="relative max-w-xl mx-auto">
-        <input
-          [(ngModel)]="searchTerm"
-          type="text"
-          placeholder="Rechercher un événement..."
-          class="w-full pl-5 pr-12 py-3 rounded-lg bg-white text-gray-800 shadow focus:outline-none focus:ring-2 focus:ring-[#A03473]"
-        />
-        <ion-icon
-          name="search-outline"
-          class="absolute right-4 top-1/2 transform -translate-y-1/2 text-2xl text-[#A03473]"
-        ></ion-icon>
-      </div>
+  <div class="poa-container max-w-4xl mx-auto px-4 text-center">
+    <h1 class="text-3xl md:text-4xl font-bold mb-4">Tous les événements</h1>
+    <p class="text-lg mb-6">Recherchez et explorez tous les événements disponibles gratuitement</p>
+    <div class="relative max-w-xl mx-auto">
+      <input
+        [(ngModel)]="searchTerm"
+        type="text"
+        placeholder="Rechercher un événement..."
+        class="w-full pl-5 pr-12 py-3 rounded-lg bg-white text-gray-800 shadow focus:outline-none focus:ring-2 focus:ring-[#A03473]"
+      />
+      <ion-icon
+        name="search-outline"
+        class="absolute right-4 top-1/2 transform -translate-y-1/2 text-2xl text-[#A03473]"
+      ></ion-icon>
     </div>
-  </section>
-  
-  <!-- Liste des événements -->
-  <section class="py-16 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4">
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <app-event *ngFor="let event of filteredEvents" [event]="event"></app-event>
-      </div>
+  </div>
+</section>
+
+<!-- Liste des événements -->
+<section class="py-16 bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <app-event *ngFor="let event of paginatedEvents" [event]="event"></app-event>
     </div>
-  </section>
-  
+
+    <!-- Pagination -->
+    <div *ngIf="totalPages > 1" class="flex justify-center mt-8 space-x-2">
+      <button
+        *ngFor="let page of [].constructor(totalPages); let i = index"
+        (click)="changePage(i + 1)"
+        [disabled]="currentPage === (i + 1)"
+        class="px-3 py-1 rounded-full border text-sm font-medium transition-all duration-200"
+        [ngClass]="{
+          'bg-[#A03473] text-white border-[#A03473]': currentPage === (i + 1),
+          'bg-white text-[#A03473] border-[#A03473] hover:bg-[#A03473]/10': currentPage !== (i + 1)
+        }"
+      >
+        {{ i + 1 }}
+      </button>
+    </div>
+  </div>
+</section>
