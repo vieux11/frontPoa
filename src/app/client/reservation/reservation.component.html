@@ -1,0 +1,40 @@
+<div class="bg-white rounded-2xl shadow p-4 space-y-4">
+  <!-- Header -->
+  <div class="flex justify-between items-center">
+    <h2 class="text-xl font-semibold text-gray-800">{{ reservation.eventTitle }}</h2>
+    <span class="px-2 py-1 text-sm rounded bg-green-100 text-green-600">
+      Confirmé
+    </span>
+  </div>
+
+  <p class="text-gray-500 text-sm">
+    Réservé le {{ reservation.createdAt | date: 'dd/MM/yyyy'}}
+  </p>
+
+  <!-- Content -->
+  <div class="space-y-2 text-sm text-gray-600">
+    <div class="flex items-center">
+      <ion-icon name="calendar-outline" class="text-[#A03473] mr-2 text-base"></ion-icon>
+      {{ reservation.eventDate | date: 'dd/MM/yyyy' }}
+    </div>
+
+    <div class="flex items-center">
+      <ion-icon name="time-outline" class="text-[#A03473] mr-2 text-base"></ion-icon>
+      {{   reservation.eventTime | date: 'hh:mm' }}
+    </div>
+
+    <div class="flex items-center">
+      <ion-icon name="location-outline" class="text-[#A03473] mr-2 text-base"></ion-icon>
+      {{ reservation.eventLocation }}
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <button (click)="generateTicket()"
+    class="w-full mt-4 flex items-center justify-center border border-gray-200 rounded-2xl px-4 py-2 text-sm transition-colors duration-200 hover:border-[#A03473]"
+  class="w-full mt-4 flex items-center justify-center border border-gray-200 rounded-2xl px-4 py-2 text-sm transition-colors duration-200 hover:border-[#A03473]"
+  >
+  <ion-icon name="download-outline" class="text-[#A03473] mr-2 text-base"></ion-icon>
+  Télécharger le billet
+ </button>
+</div>
