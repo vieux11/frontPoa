@@ -18,13 +18,13 @@
           </ng-container>
   
           <ng-container *ngIf="authService.isAuthenticated() && authService.getRole() === 'admin'">
-            <a [routerLink]="['/admin']" routerLinkActive="router-link-active" class="text-gray-700 hover:text-primary transition-colors">Gérer événements</a>
-            <a (click)="navigateToReservations()" class="text-gray-700 hover:text-primary transition-colors">Réservations</a>
+            <a [routerLink]="['/admin']" routerLinkActive="router-link-active" class="text-gray-700 hover:text-primary transition-colors cursor-pointer">Gérer événements</a>
+            <a [routerLink]="['/admin-reservations']" routerLinkActive="router-link-active" class="text-gray-700 hover:text-primary transition-colors cursor-pointer">Réservations</a>
           </ng-container>
   
           <ng-container *ngIf="authService.isAuthenticated() && authService.getRole() === 'client'">
-            <a (click)="navigateToClientEvents()" class="text-gray-700 hover:text-primary transition-colors">Événements</a>
-            <a (click)="navigateToReservations()" class="text-gray-700 hover:text-primary transition-colors">Mes réservations</a>
+            <a [routerLink]="['/events']" class="text-gray-700 hover:text-primary transition-colors">Événements</a>
+            <a [routerLink]="['/client']" class="text-gray-700 hover:text-primary transition-colors">Mes réservations</a>
           </ng-container>
   
           <!-- User controls -->
