@@ -42,10 +42,12 @@
     <!-- Bouton -->
     <div class="p-4 pt-2">
       <button
-        class="w-full bg-[#A03473] text-white py-2 px-4 rounded-xl hover:bg-[#861f5d] transition"
-        (click)="goToDetails()"
+        class="w-full bg-[#A03473] text-white py-2 px-4 rounded-xl hover:bg-[#861f5d] transition disabled:opacity-50"
+        [disabled]="loading"
+        (click)="handleReservation()"
       >
-        Réserver
+        <span *ngIf="!loading">Réserver</span>
+        <span *ngIf="loading">Réservation...</span>
       </button>
     </div>
   </div>
