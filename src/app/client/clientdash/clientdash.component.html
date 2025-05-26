@@ -1,1 +1,16 @@
-<p>clientdash works!</p>
+<!-- src/app/pages/my-reservations/my-reservations.component.html -->
+<div class="py-8 max-w-4xl mx-auto">
+  <h1 class="text-3xl font-bold mb-8">Mes réservations</h1>
+
+  <ng-container *ngIf="!loading && reservations.length === 0">
+    <div class="text-center py-12">
+      <p class="text-gray-500 mb-4">Vous n'avez pas encore de réservations.</p>
+      <button routerLink="/events" class="btn btn-primary">Découvrir les événements</button>
+    </div>
+  </ng-container>
+
+  <div *ngIf="reservations.length > 0" class="grid gap-5" >
+    <app-reservation *ngFor="let reservation of reservations" [reservation]="reservation"></app-reservation>
+  </div>
+</div>
+
