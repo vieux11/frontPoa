@@ -1,0 +1,106 @@
+<div class="p-6 max-w-5xl mx-auto">
+  <h2 class="text-2xl font-semibold text-primary mb-6">Tableau de bord des réservations</h2>
+
+  <!-- Sélecteur d'événement -->
+  <div class="mb-6">
+    <label class="text-sm font-medium text-gray-700 mb-2 block">Sélectionnez un événement :</label>
+    <select [(ngModel)]="selectedEventId" (change)="onSelectEvent()"
+            class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+      <option value="" disabled selected>-- Choisir un événement --</option>
+      <option *ngFor="let event of events" [value]="event.id">{{ event.title }}</option>
+    </select>
+  </div>
+
+  <!-- Dashboard -->
+  <div *ngIf="dashboardData">
+    <h3 class="text-lg font-semibold text-primary mb-4">Réservations pour l'événement sélectionné</h3>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+      <!-- Statistiques -->
+      <div class="bg-[#A03473] rounded-2xl shadow p-6 border border-primary">
+        <p class="text-white">Réservés : <strong>{{ dashboardData.reservedCount }} / {{ dashboardData.totalPlaces }}</strong></p>
+        <p class="text-white">Places restantes : <strong>{{ dashboardData.availablePlaces }}</strong></p>
+      </div>
+
+      <!-- Cercle de progression -->
+        <div class="flex justify-center items-center">
+            <div class="relative w-32 h-32">
+                <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                <!-- Cercle de fond -->
+                <path
+                    class="text-gray-200"
+                    stroke="currentColor"
+                    stroke-width="4"
+                    fill="none"
+                    d="M18 2.0845
+                    a 15.9155 15.9155 0 0 1 0 31.831
+                    a 15.9155 15.9155 0 0 1 0 -31.831"
+                />
+                <!-- Cercle de progression -->
+                <path
+                    class="text-primary"
+                    stroke="currentColor"
+                    stroke-width="4"
+                    fill="none"
+                    [attr.stroke-dasharray]="getPercentage() + ', 100'"
+                    d="M18 2.0845
+                    a 15.9155 15.9155 0 0 1 0 31.831
+                    a 15.9155 15.9155 0 0 1 0 -31.831"
+                />
+                </svg>
+            <!-- Pourcentage au centre -->
+            <div class="absolute inset-0 flex items-center justify-center">
+                <span class="text-primary text-lg font-bold">
+                    {{ getPercentage() | number:'1.0-0' }}%
+                </span>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <!-- Tableau des réservations -->
+    <div *ngIf="dashboardData" class="bg-white rounded-2xl shadow p-4 mt-6">
+    <h3 class="text-lg font-semibold text-primary mb-2">
+        Liste des réservations ({{ dashboardData.eventTitle }})
+    </h3>
+
+    <table class="min-w-full table-auto">
+        <thead>
+        <tr class="bg-primary text-white text-left">
+            <th class="p-2">Client</th>
+            <th class="p-2">Coupon</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let res of paginatedReservations" class="border-b hover:bg-gray-50">
+            <td class="p-2">{{ res.clientName }}</td>
+            <td class="p-2">{{ res.coupon }}</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div *ngIf="totalPages > 1" class="flex justify-center mt-4 space-x-2">
+        <button
+        *ngFor="let page of [].constructor(totalPages); let i = index"
+        (click)="changePage(i + 1)"
+        [disabled]="currentPage === (i + 1)"
+        class="px-3 py-1 rounded-full border text-sm font-medium transition-all duration-200"
+        [ngClass]="{
+            'bg-[#A03473] text-white border-[#A03473]': currentPage === (i + 1),
+            'bg-white text-[#A03473] border-[#A03473] hover:bg-[#A03473]/10': currentPage !== (i + 1)
+        }"
+        >
+        {{ i + 1 }}
+        </button>
+    </div>
+    </div>
+
+
+    <!-- Boutons Export -->
+    <div class="mt-6 flex gap-4">
+      <button (click)="exportPDF()" class="flex items-center gap-2 text-primary hover:text-white hover:bg-[#A03473] transition px-4 py-2 rounded-lg">Exporter PDF</button>
+      <button (click)="exportCSV()" class="bg-gray-700 text-white px-4 py-2 rounded-xl shadow hover:bg-gray-900 transition">Exporter CSV</button>
+    </div>
+  </div>
+</div>
