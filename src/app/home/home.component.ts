@@ -21,7 +21,7 @@ export class HomeComponent {
     this.eventservice.getAllEvents().subscribe((events) => {
       this.latestEvents = events
         .sort((a, b) => new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime())
-        .slice(0, 10);
+        .slice(0, 6);
     });
   }
 
