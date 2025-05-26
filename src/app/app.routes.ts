@@ -8,6 +8,7 @@ import { ClientdashComponent } from './client/clientdash/clientdash.component';
 import { AdmindashComponent } from './admin/admindash/admindash.component';
 import { CreateEventComponent } from './admin/create-event/create-event.component';
 import { EventListComponent } from './core/event-list/event-list.component';
+import { ReservationsDashboardComponent } from './admin/reservations-dashboard/reservations-dashboard.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -22,6 +23,12 @@ export const routes: Routes = [
   {
     path: 'creer-event',
     component: CreateEventComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { role: 'admin' }
+  },
+  {
+    path: 'admin-reservations',
+    component: ReservationsDashboardComponent,
     canActivate: [authGuard, roleGuard],
     data: { role: 'admin' }
   },
