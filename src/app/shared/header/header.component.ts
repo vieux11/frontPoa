@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, HostListener } from '@angular/core';
 import { AuthService } from '../../core/services/auth.service';
 import { Router, RouterLink, RouterModule } from '@angular/router';
 import { NgIf } from '@angular/common';
@@ -11,10 +11,33 @@ import { NgIf } from '@angular/common';
   styleUrl: './header.component.css'
 })
 export class HeaderComponent {
+  isMenuOpen = false;
+  isMobileView = false;
 
-  constructor(public authService: AuthService, private router: Router) {}
+  constructor(public authService: AuthService, private router: Router) { this.checkViewport();}
 
   ngOnInit() {
+  }
+  @HostListener('window:resize', ['$event'])
+  onResize(event: Event) {
+    this.checkViewport();
+    if (!this.isMobileView && this.isMenuOpen) {
+      this.isMenuOpen = false;
+    }
+  }
+
+  private checkViewport() {
+    this.isMobileView = window.innerWidth < 768; // 768px correspond à md: dans Tailwind
+  }
+
+  toggleMenu() {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
+
+  closeMenu() {
+    if (this.isMobileView) {
+      this.isMenuOpen = false;
+    }
   }
 
   logout() {

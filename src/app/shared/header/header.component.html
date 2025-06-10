@@ -1,46 +1,133 @@
 <header class="bg-white shadow-sm">
-    <div class="container py-4">
-      <div class="flex justify-between items-center">
-        <!-- Logo -->
-        <a routerLink="/" class="flex items-center space-x-2">
-          <ion-icon name="calendar-outline" class="h-8 w-8 text-primary"></ion-icon>
-          <span class="text-xl font-bold text-gray-800">poaEvent</span>
+  <div class="container py-4">
+    <div class="flex justify-between items-center">
+      <!-- Logo -->
+      <a routerLink="/" class="flex items-center space-x-2">
+        <ion-icon name="calendar-outline" class="h-8 w-8 text-primary"></ion-icon>
+        <span class="text-xl font-bold text-gray-800">poaEvent</span>
+      </a>
+
+      <!-- Bouton menu mobile -->
+      <button 
+        (click)="toggleMenu()"
+        class="md:hidden p-2 rounded-md text-gray-700 hover:text-primary focus:outline-none"
+        aria-label="Menu"
+      >
+        <ion-icon [name]="isMenuOpen ? 'close-outline' : 'menu-outline'" class="h-6 w-6"></ion-icon>
+      </button>
+
+      <!-- Navigation Desktop -->
+      <nav class="hidden md:flex items-center space-x-6">
+        <a [routerLink]="['/']" 
+           routerLinkActive="active-link" 
+           [routerLinkActiveOptions]="{exact: true}"
+           class=" transition-colors relative">
+           Accueil
         </a>
-  
-        <!-- Navigation -->
-        <nav class="flex items-center space-x-6">
-          <a [routerLink]="['/']" routerLinkActive="router-link-active"  class="text-gray-700 hover:text-primary transition-colors">Accueil</a>
-  
-          <!-- Dynamic navigation based on auth state -->
-          <ng-container *ngIf="!authService.isAuthenticated()">
-            <a [routerLink]="['/login']" routerLinkActive="router-link-active"  class="text-gray-700 hover:text-primary transition-colors">Connexion</a>
-            <a [routerLink]="['/register']" routerLinkActive="router-link-active"  class="text-gray-700 hover:text-primary transition-colors">Inscription</a>
-          </ng-container>
-  
-          <ng-container *ngIf="authService.isAuthenticated() && authService.getRole() === 'admin'">
-            <a [routerLink]="['/admin']" routerLinkActive="router-link-active" class="text-gray-700 hover:text-primary transition-colors cursor-pointer">Gérer événements</a>
-            <a [routerLink]="['/admin-reservations']" routerLinkActive="router-link-active" class="text-gray-700 hover:text-primary transition-colors cursor-pointer">Réservations</a>
-          </ng-container>
-  
-          <ng-container *ngIf="authService.isAuthenticated() && authService.getRole() === 'client'">
-            <a [routerLink]="['/events']" class="text-gray-700 hover:text-primary transition-colors">Événements</a>
-            <a [routerLink]="['/client']" class="text-gray-700 hover:text-primary transition-colors">Mes réservations</a>
-          </ng-container>
-  
-          <!-- User controls -->
-          <ng-container *ngIf="authService.isAuthenticated()">
-            <div class="flex items-center space-x-3">
-              <div class="text-sm text-gray-600 flex items-center">
-                <ion-icon name="person-circle-outline" class="h-4 w-4 mr-1"></ion-icon>
-                <span>{{ authService.getUserName() }}</span>
-              </div>
-              <button (click)="logout()" title="Déconnexion" class="bg-transparent border-none cursor-pointer">
-                <ion-icon name="log-out-outline" class="h-4 w-4 text-gray-600"></ion-icon>
-              </button>
+
+        <!-- Dynamic navigation based on auth state -->
+        <ng-container *ngIf="!authService.isAuthenticated()">
+          <a [routerLink]="['/login']" routerLinkActive="active-link" class=" transition-colors relative">Connexion</a>
+          <a [routerLink]="['/register']" routerLinkActive="active-link" class=" transition-colors relative">Inscription</a>
+        </ng-container>
+
+        <ng-container *ngIf="authService.isAuthenticated() && authService.getRole() === 'admin'">
+          <a [routerLink]="['/admin']" routerLinkActive="active-link" class=" transition-colors relative cursor-pointer">Gérer événements</a>
+          <a [routerLink]="['/admin-reservations']" routerLinkActive="active-link" class=" transition-colors relative cursor-pointer">Réservations</a>
+        </ng-container>
+
+        <ng-container *ngIf="authService.isAuthenticated() && authService.getRole() === 'client'">
+          <a [routerLink]="['/events']" routerLinkActive="active-link" class=" transition-colors relative">Événements</a>
+          <a [routerLink]="['/client']" routerLinkActive="active-link" class=" transition-colors relative">Mes réservations</a>
+        </ng-container>
+
+        <!-- User controls -->
+        <ng-container *ngIf="authService.isAuthenticated()">
+          <div class="flex items-center space-x-3">
+            <div class="text-sm text-gray-600 flex items-center">
+              <ion-icon name="person-circle-outline" class="h-4 w-4 mr-1"></ion-icon>
+              <span>{{ authService.getUserName() }}</span>
             </div>
-          </ng-container>
-        </nav>
-      </div>
+            <button (click)="logout()" title="Déconnexion" class="bg-transparent border-none cursor-pointer">
+              <ion-icon name="log-out-outline" class="h-4 w-4 text-gray-600"></ion-icon>
+            </button>
+          </div>
+        </ng-container>
+      </nav>
     </div>
-  </header>
-  
+
+    <!-- Navigation Mobile -->
+    <div 
+      class="md:hidden transition-all duration-300 ease-in-out overflow-hidden"
+      [class.max-h-0]="!isMenuOpen"
+      [class.max-h-screen]="isMenuOpen"
+    >
+      <nav class="flex flex-col space-y-4 pt-4">
+        <a [routerLink]="['/']" 
+           routerLinkActive="active-link" 
+           [routerLinkActiveOptions]="{exact: true}"
+           class=" hover:text-primary transition-colors py-2"
+           (click)="closeMenu()">
+           Accueil
+        </a>
+
+        <ng-container *ngIf="!authService.isAuthenticated()">
+          <a [routerLink]="['/login']" 
+             routerLinkActive="active-link" 
+             class=" hover:text-primary transition-colors py-2"
+             (click)="closeMenu()">
+             Connexion
+          </a>
+          <a [routerLink]="['/register']" 
+             routerLinkActive="active-link" 
+             class=" hover:text-primary transition-colors py-2"
+             (click)="closeMenu()">
+             Inscription
+          </a>
+        </ng-container>
+
+        <ng-container *ngIf="authService.isAuthenticated() && authService.getRole() === 'admin'">
+          <a [routerLink]="['/admin']" 
+             routerLinkActive="active-link" 
+             class=" hover:text-primary transition-colors py-2 cursor-pointer"
+             (click)="closeMenu()">
+             Gérer événements
+          </a>
+          <a [routerLink]="['/admin-reservations']" 
+             routerLinkActive="active-link" 
+             class=" hover:text-primary transition-colors py-2 cursor-pointer"
+             (click)="closeMenu()">
+             Réservations
+          </a>
+        </ng-container>
+
+        <ng-container *ngIf="authService.isAuthenticated() && authService.getRole() === 'client'">
+          <a [routerLink]="['/events']" 
+             routerLinkActive="active-link" 
+             class=" hover:text-primary transition-colors py-2"
+             (click)="closeMenu()">
+             Événements
+          </a>
+          <a [routerLink]="['/client']" 
+             routerLinkActive="active-link" 
+             class=" hover:text-primary transition-colors py-2"
+             (click)="closeMenu()">
+             Mes réservations
+          </a>
+        </ng-container>
+
+        <ng-container *ngIf="authService.isAuthenticated()">
+          <div class="flex items-center space-x-3 pt-2">
+            <div class="text-sm text-gray-600 flex items-center">
+              <ion-icon name="person-circle-outline" class="h-4 w-4 mr-1"></ion-icon>
+              <span>{{ authService.getUserName() }}</span>
+            </div>
+            <button (click)="logout()" title="Déconnexion" class="bg-transparent border-none cursor-pointer">
+              <ion-icon name="log-out-outline" class="h-4 w-4 text-gray-600"></ion-icon>
+            </button>
+          </div>
+        </ng-container>
+      </nav>
+    </div>
+  </div>
+</header>

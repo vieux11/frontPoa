@@ -1,28 +1,104 @@
-/* Style de base pour le header */
+/* Base Styles */
 header {
-    background-color: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Links & Buttons */
+a {
+  text-decoration: none;
+  color: #4a4a4a;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: #A03473;
+}
+
+button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Active Link Styles */
+a.active-link {
+  color: #A03473;
+  font-weight: 500;
+  position: relative;
+}
+
+a.active-link::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #A03473;
+  animation: underline 0.3s ease-out;
+}
+
+/* Mobile First Approach */
+@media (max-width: 767px) {
   .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding: 0 15px;
   }
-  
-  a {
-    text-decoration: none;
-    color: #4a4a4a;
+
+  .mobile-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
   }
-  
-  a:hover {
-    color: #A03473;
+
+  .mobile-menu.open {
+    max-height: 100vh;
   }
-  
-  button {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
+
+  .active-link::after {
+    display: none; /* Hide underline on mobile if preferred */
   }
-  
+}
+
+/* Tablet and Desktop Styles */
+@media (min-width: 768px) {
+  header {
+    padding: 1rem 0;
+  }
+
+  .container {
+    padding: 0 25px;
+  }
+
+  .active-link::after {
+    display: block;
+  }
+}
+
+/* Animation */
+@keyframes underline {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* Utility Classes */
+.hidden-mobile {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .hidden-mobile {
+    display: block;
+  }
+
+  .hidden-desktop {
+    display: none;
+  }
+}

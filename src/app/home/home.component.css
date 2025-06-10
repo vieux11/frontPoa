@@ -1,0 +1,179 @@
+/* Animation Keyframes - Consolidées */
+@keyframes shimmer {
+  0% { transform: translateX(-100%) rotate(30deg); }
+  100% { transform: translateX(100%) rotate(30deg); }
+}
+
+@keyframes fadeIn {
+  to { opacity: 1 }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+/* Transitions communes */
+[class*="transition-"], button, .bg-white, .bg-purple-100, ion-icon {
+  transition: all 0.3s ease;
+}
+
+/* Hero Section */
+.bg-gradient-to-r {
+  position: relative;
+  overflow: hidden;
+}
+
+.bg-gradient-to-r::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: rotate(30deg);
+  animation: shimmer 3s infinite linear;
+  opacity: 0.5;
+}
+
+/* Boutons */
+button {
+  transform: translateY(0);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Cartes Événements */
+app-event {
+  opacity: 0;
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+app-event:nth-child(1) { animation-delay: 0.1s; }
+app-event:nth-child(2) { animation-delay: 0.2s; }
+app-event:nth-child(3) { animation-delay: 0.3s; }
+
+/* Section Comment ça marche */
+.bg-white {
+  transform: perspective(1000px) rotateX(0deg);
+}
+
+.bg-white:hover {
+  transform: perspective(1000px) rotateX(5deg);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.bg-white:hover .bg-purple-100 {
+  transform: scale(1.1);
+  background-color: #f3e8ff !important;
+}
+
+.bg-white:hover ion-icon {
+  transform: rotate(10deg);
+}
+
+/* Animation globale */
+body {
+  animation: fadeIn 1s ease;
+}
+
+/* Bouton Voir tous */
+.hover\:bg-\[\#A03473\] {
+  position: relative;
+  overflow: hidden;
+}
+
+.hover\:bg-\[\#A03473\]::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: all 0.6s ease;
+}
+
+.hover\:bg-\[\#A03473\]:hover::after {
+  left: 100%;
+}
+
+/* Animation texte */
+.poa-container h1 {
+  overflow: hidden;
+  white-space: nowrap;
+  animation: typing 1.5s steps(30, end) forwards;
+}
+
+.poa-container p {
+  opacity: 0;
+  animation: fadeIn 0.5s ease-in 1.8s forwards;
+}
+
+/* Animations scroll */
+.how-it-works-section {
+  view-timeline-name: --how-it-works;
+  view-timeline-axis: block;
+}
+
+.how-it-works-section h2,
+.how-it-works-section .grid > div {
+  opacity: 0;
+}
+
+.how-it-works-section h2 {
+  animation: fadeInUp 0.6s ease-out forwards;
+  animation-timeline: --how-it-works;
+  animation-range: entry 0% cover 20%;
+}
+
+.how-it-works-section .grid > div {
+  animation: fadeInUp 0.6s ease-out forwards;
+  animation-timeline: --how-it-works;
+}
+
+.how-it-works-section .grid > div:nth-child(1) { animation-range: entry 10% cover 25%; }
+.how-it-works-section .grid > div:nth-child(2) { animation-range: entry 20% cover 30%; }
+.how-it-works-section .grid > div:nth-child(3) { animation-range: entry 30% cover 35%; }
+
+/* Classes utilitaires réutilisables */
+.animate-typing {
+  overflow: hidden;
+  white-space: nowrap;
+  animation: typing 1.8s steps(30, end) forwards;
+}
+
+.animate-fade-in {
+  opacity: 0;
+  animation: fadeIn 0.8s ease-out 1.8s forwards;
+}
+
+.animate-section {
+  view-timeline-name: --section;
+}
+
+.animate-item {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp 0.6s ease-out forwards;
+  animation-timeline: --section;
+}
+
+.delay-100 { animation-range: entry 10% cover 20%; }
+.delay-200 { animation-range: entry 20% cover 30%; }
+.delay-300 { animation-range: entry 30% cover 40%; }

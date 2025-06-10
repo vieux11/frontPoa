@@ -42,6 +42,9 @@ export class EventListComponent {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     return this.filteredEvents.slice(start, start + this.itemsPerPage);
   }
+   get data():boolean{
+    return this.paginatedEvents.length>0;
+   }
 
   // nombre total de pages
   get totalPages(): number {

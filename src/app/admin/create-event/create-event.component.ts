@@ -1,18 +1,19 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { EventService } from '../../core/services/event.service';
 import { Router } from '@angular/router';
-import { NgIf } from '@angular/common';
+
 
 @Component({
   selector: 'app-create-event',
-  imports: [ReactiveFormsModule, NgIf],
+  imports: [ReactiveFormsModule],
   templateUrl: './create-event.component.html',
   styleUrl: './create-event.component.css'
 })
 export class CreateEventComponent {
   eventForm: FormGroup;
   submitted = false;
+  apiError = '';
 
   constructor(
     private fb: FormBuilder,
@@ -20,44 +21,45 @@ export class CreateEventComponent {
     private router: Router
   ) {
     this.eventForm = this.fb.group({
-      title: ['', Validators.required],
-      description: ['', Validators.required],
+      title: ['', [Validators.required, Validators.minLength(5)]],
+      description: ['', [Validators.required, Validators.minLength(10)]],
       location: ['', Validators.required],
-      eventDate: ['', Validators.required],
+      eventDate: ['', [Validators.required, this.futureDateValidator]],
       heure: ['', Validators.required],
       maxParticipants: [0, [Validators.required, Validators.min(1)]],
-      image: ['']
+      image: ['', Validators.required]
     });
   }
 
+  // Validateur custom : Date future
+  futureDateValidator(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) return null;
+    const selectedDate = new Date(control.value);
+    const today = new Date();
+    return selectedDate < today ? { pastDate: true } : null;
+  }
+
+  // Validateur custom : URL optionnelle mais valide si renseignée
   handleSubmit() {
+    this.eventForm.markAllAsTouched(); // Force l'affichage des erreurs
     if (this.eventForm.invalid) return;
+
     const formValues = this.eventForm.value;
+    const fullDatetime = `${formValues.eventDate} ${formValues.heure}:00`;
 
-  // Concaténer la date et l’heure
-  const eventDate = formValues.eventDate; // ex: "2025-04-25"
-  const heure = formValues.heure;         // ex: "20:00"
-
-  const fullDatetime = `${eventDate} ${heure}:00`; // ex: "2025-04-25 20:00:00"
-
-  const eventData = {
-    ...formValues,
-    heure: fullDatetime // On envoie le champ heure au bon format pour MySQL
-  };
-
-    this.eventService.createEvent(eventData).subscribe({
+    this.eventService.createEvent({ ...formValues, heure: fullDatetime }).subscribe({
       next: () => {
-        console.log('Événement créé avec succès');
-        this.router.navigate(['/admin']); // ou autre page après création
+        this.router.navigate(['/admin']);
       },
       error: (err) => {
-        console.error('Erreur création événement :', err);
+        this.apiError = err.message || 'Erreur lors de la création';
         this.submitted = true;
       }
     });
   }
 
-  close() {
+  closeError() {
+    this.apiError = '';
     this.submitted = false;
   }
 }

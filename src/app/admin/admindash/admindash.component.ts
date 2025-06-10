@@ -23,7 +23,7 @@ interface EventWithStats {
 
 @Component({
   selector: 'app-admindash',
-  imports: [RouterLink, NgFor, DatePipe],
+  imports: [RouterLink, DatePipe, NgFor],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './admindash.component.html',
   styleUrl: './admindash.component.css'
@@ -63,5 +63,8 @@ export class AdmindashComponent {
       error: (err) => console.error('Erreur récupération événements', err)
     });
   }
+   get hasEventsWithStats(): boolean {
+  return this.eventsWithStats.length > 0;
+ }
 
 }

@@ -1,5 +1,5 @@
 <!-- Hero Section -->
-<section class="bg-gradient-to-r from-[#A03473] to-[#88175a]  text-white py-20">
+<section class="bg-gradient-to-r from-[#A03473] to-[#88175a]  text-white py-20 ">
     <div class="poa-container max-w-4xl mx-auto px-4">
       <h1 class="text-4xl md:text-5xl font-bold mb-6">
         Découvrez et réservez des événements gratuitement
@@ -33,16 +33,53 @@
         </button>
       </div>
   
+      @defer (when latestEvents && latestEvents.length > 0) {
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         <app-event *ngFor="let event of latestEvents" [event]="event"></app-event>
       </div>
-    </div>
+    } @placeholder (minimum 500ms) {
+      <!-- Skeleton loader -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @for (i of [1,2,3]; track i) {
+          <div class="bg-gray-100 rounded-lg overflow-hidden animate-pulse">
+            <div class="h-48 bg-gray-200"></div>
+            <div class="p-4">
+              <div class="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
+              <div class="h-4 bg-gray-200 rounded w-1/2 mb-3"></div>
+              <div class="h-4 bg-gray-200 rounded w-full mb-1"></div>
+              <div class="h-4 bg-gray-200 rounded w-5/6"></div>
+            </div>
+          </div>
+        }
+      </div>
+    } @loading (minimum 1s) {
+      <!-- Transition entre skeleton et vrai contenu -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @for (i of [1,2,3]; track i) {
+          <div class="bg-gray-100 rounded-lg overflow-hidden animate-pulse">
+            <div class="h-48 bg-gray-200"></div>
+            <div class="p-4">
+              <div class="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
+              <div class="h-4 bg-gray-200 rounded w-1/2 mb-3"></div>
+              <div class="h-4 bg-gray-200 rounded w-full mb-1"></div>
+              <div class="h-4 bg-gray-200 rounded w-5/6"></div>
+            </div>
+          </div>
+        }
+      </div>
+    } @error {
+      <div class="text-center py-8 text-red-500">
+        Impossible de charger les événements
+      </div>
+    }
+  </div>
   </section>
   
   
   
   <!-- Comment ça marche -->
-  <section class="py-16 bg-gray-50">
+   @defer (on viewport){
+  <section class="py-16 bg-gray-50 how-it-works-section">
     <div class="poa-container max-w-6xl mx-auto px-4 text-center">
       <h2 class="text-3xl font-bold mb-12">Comment ça marche</h2>
   
@@ -79,6 +116,9 @@
       </div>
     </div>
   </section>
-
+}
+@placeholder {
+  <div class="h-[50vh]"></div> <!-- Espace réservé -->
+}
   <app-footer></app-footer>
   
