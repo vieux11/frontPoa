@@ -1,32 +1,82 @@
-<div class="max-w-md mx-auto mt-10 p-6 bg-white shadow rounded">
+<div class="max-w-md mx-auto mt-10 p-6 bg-white shadow rounded relative">
+  <!-- Toast de succès -->
+  @if (showSuccessToast) {
+    <div class="fixed top-4 right-4 z-50 animate-fade-in">
+      <div class="bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg flex items-center">
+        <span>👋 Connexion réussie ! Redirection en cours...</span>
+        <button (click)="showSuccessToast = false" class="ml-4 text-xl hover:text-green-200">
+          &times;
+        </button>
+      </div>
+    </div>
+  }
+
   <h2 class="text-2xl font-bold mb-4 text-center">Connexion</h2>
 
-  <!-- Message d'erreur -->
-  <div *ngIf="Submitted" class="mt-3">
-    <div class="alert alert-danger d-flex justify-between items-center p-3 bg-red-100 text-red-800 rounded">
-      <strong>Erreur de connexion</strong>
-      <button (click)="close()" type="button" class="text-xl font-bold px-2">&times;</button>
+  <!-- Message d'erreur API -->
+  @if (submitted && apiError) {
+    <div class="mb-4 p-3 bg-red-100 text-red-800 rounded flex justify-between items-center">
+      <strong>{{ apiError }}</strong>
+      <button (click)="closeError()" class="text-xl font-bold px-2">&times;</button>
     </div>
-  </div>
+  }
 
   <form [formGroup]="loginForm" (ngSubmit)="handleSubmit()">
+    <!-- Email -->
     <div class="mb-4">
-      <label for="email" class="block text-gray-700">Adresse email</label>
-      <input type="email" id="email" formControlName="email" required class="w-full border border-[#A03473] p-2 rounded mt-1">
+      <label for="email" class="block text-gray-700">Email *</label>
+      <input 
+        type="email" 
+        id="email" 
+        formControlName="email" 
+        class="w-full border p-2 rounded mt-1"
+        [class.border-red-500]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+      >
+      @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+        <div class="text-red-500 text-sm mt-1">
+          @if (loginForm.get('email')?.errors?.['required']) {
+            <p>L'email est obligatoire.</p>
+          }
+          @if (loginForm.get('email')?.errors?.['email']) {
+            <p>Veuillez entrer un email valide (ex: user&#64;example.com).</p>
+          }
+        </div>
+      }
     </div>
 
+    <!-- Mot de passe -->
     <div class="mb-4">
-      <label for="password" class="block text-gray-700">Mot de passe</label>
-      <input type="password" id="password" formControlName="password" required class="w-full border border-[#A03473] p-2 rounded mt-1">
+      <label for="password" class="block text-gray-700">Mot de passe *</label>
+      <input 
+        type="password" 
+        id="password" 
+        formControlName="password" 
+        class="w-full border p-2 rounded mt-1"
+        [class.border-red-500]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+      >
+      @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+        <div class="text-red-500 text-sm mt-1">
+          @if (loginForm.get('password')?.errors?.['required']) {
+            <p>Le mot de passe est obligatoire.</p>
+          }
+          @if (loginForm.get('password')?.errors?.['minlength']) {
+            <p>8 caractères minimum.</p>
+          }
+        </div>
+      }
     </div>
 
-    <button type="submit" class="w-full bg-[#A03473] text-white py-2 rounded hover:bg-[#88175a] transition cursor-pointer">
+    <button 
+      type="submit" 
+      class="w-full bg-[#A03473] text-white py-2 rounded hover:bg-[#88175a] transition cursor-pointer"
+      [disabled]="loginForm.invalid"
+    >
       Se connecter
     </button>
   </form>
 
   <p class="text-center text-sm mt-4">
     Pas encore de compte ?
-    <a [routerLink]="['/register']" routerLinkActive="router-link-active"   class="text-primary hover:underline">Créer un compte</a>
+    <a [routerLink]="['/register']" class="text-[#A03473] hover:underline">Créer un compte</a>
   </p>
 </div>

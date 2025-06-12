@@ -3,3 +3,26 @@ input:focus, textarea:focus {
   border-color: #861f5d;
   box-shadow: 0 0 0 2px rgba(255, 47, 172, 0.3); /* optionnel, un léger halo violet */
 }
+/* Animation */
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Styles des champs */
+input.ng-invalid.ng-touched {
+  border-color: #ef4444 !important;
+}
+
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.hover\:text-green-200:hover {
+  color: #bef264;
+}
