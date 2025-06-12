@@ -23,13 +23,15 @@ interface EventWithStats {
 
 @Component({
   selector: 'app-admindash',
-  imports: [RouterLink, DatePipe, NgFor],
+  imports: [RouterLink, DatePipe],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './admindash.component.html',
   styleUrl: './admindash.component.css'
 })
 export class AdmindashComponent {
   eventsWithStats: EventWithStats[] = [];
+  isLoading = true;
+  hasError = false;
 
   constructor(private eventService: EventService) {}
 
@@ -38,33 +40,42 @@ export class AdmindashComponent {
   }
 
   fetchMyEventsWithStats() {
+    this.isLoading = true;
+    this.hasError = false;
+    
     this.eventService.getMyEvents().subscribe({
       next: (events) => {
-        // Pour chaque événement, on récupère les stats et on fusionne les données
-        console.log("lles events, vous ressemblez à quoi:", events)
+        if (events.length === 0) {
+          this.isLoading = false;
+          return;
+        }
 
+        let processedEvents = 0;
         events.forEach((event) => {
-         
           this.eventService.getStats(event.id).subscribe({
             next: (stats) => {
-              console.log("montre moi les stats ", stats)
-              const enrichedEvent: EventWithStats = {
+              this.eventsWithStats.push({
                 ...event,
                 remainingSeats: stats.remainingSeats,
                 totalReservations: stats.totalReservations
-              };
-              this.eventsWithStats.push(enrichedEvent);
+              });
+              
+              processedEvents++;
+              if (processedEvents === events.length) {
+                this.isLoading = false;
+              }
             },
-            error: (err) => console.error('Erreur stats event', err)
+            error: () => this.handleError()
           });
         });
-        console.log('Events with stats:', this.eventsWithStats);
       },
-      error: (err) => console.error('Erreur récupération événements', err)
+      error: () => this.handleError()
     });
   }
-   get hasEventsWithStats(): boolean {
-  return this.eventsWithStats.length > 0;
- }
+
+  private handleError() {
+    this.isLoading = false;
+    this.hasError = true;
+  }
 
 }
