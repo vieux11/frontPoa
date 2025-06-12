@@ -49,7 +49,7 @@ export class EventComponent {
           alert(err.error.message || 'Impossible de réserver.');
         } else {
           console.error(err);
-          alert('Une erreur est survenue.');
+          alert(err.error.message);
         }
       },
     });
