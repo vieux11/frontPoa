@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 })
 export class AuthService {
 
-  private baseUrl = 'https://poaevent-back.onrender.com';
+  private baseUrl = 'http://127.0.0.1:3333';
 
   // Signals réactifs
   isConnected = signal<boolean>(false);

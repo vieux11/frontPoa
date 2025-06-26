@@ -9,22 +9,36 @@ import { FooterComponent } from '../shared/footer/footer.component';
 
 @Component({
   selector: 'app-home',
-  imports: [NgFor, EventComponent, RouterLink, FooterComponent],
+  imports: [EventComponent, RouterLink, FooterComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
   latestEvents: EventType[] = [];
+  isLoading = true;
+  hasError = false;
   constructor(public authService: AuthService, private router: Router, public eventservice:EventService) {}
   ngOnInit(): void {
-    this.eventservice.getAllEvents().subscribe((events) => {
-      this.latestEvents = events
-        .sort((a, b) => new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime())
-        .slice(0, 6);
+    this.loadEvents();
+  }
+  loadEvents() {
+    this.isLoading = true;
+    this.hasError = false;
+    
+    this.eventservice.getAllEvents().subscribe({
+      next: (events) => {
+        this.latestEvents = events
+          .sort((a, b) => new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime())
+          .slice(0, 6);
+        this.isLoading = false;
+      },
+      error: () => {
+        this.isLoading = false;
+        this.hasError = true;
+      }
     });
   }
-
   handleCreateEvent() {
     const isAuth = this.authService.isAuthenticated();
     const role = this.authService.getRole();

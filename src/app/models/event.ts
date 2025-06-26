@@ -6,7 +6,21 @@ export interface EventType {
     eventDate: string
     heure?: string
     maxParticipants: number
-    image: string
+    image: string 
+    adminId?: number
+    adminFullName?: string
+    createdAt?: string
+    updatedAt?: string
+}
+export interface EventTypeSend {
+    id?: number
+    title: string
+    description: string
+    location: string
+    eventDate: string
+    heure?: string
+    maxParticipants: number
+    image: File
     adminId?: number
     adminFullName?: string
     createdAt?: string

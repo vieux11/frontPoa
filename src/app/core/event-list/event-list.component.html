@@ -21,34 +21,12 @@
 <!-- Liste des événements -->
 
 <section class="py-16 bg-gray-50">
-  @defer( when data){
   <div class="max-w-7xl mx-auto px-4">
-    
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <app-event *ngFor="let event of paginatedEvents" [event]="event"></app-event>
-    </div>
-
-    <!-- Pagination -->
-    <div *ngIf="totalPages > 1" class="flex justify-center mt-8 space-x-2">
-      <button
-        *ngFor="let page of [].constructor(totalPages); let i = index"
-        (click)="changePage(i + 1)"
-        [disabled]="currentPage === (i + 1)"
-        class="px-3 py-1 rounded-full border text-sm font-medium transition-all duration-200"
-        [ngClass]="{
-          'bg-[#A03473] text-white border-[#A03473]': currentPage === (i + 1),
-          'bg-white text-[#A03473] border-[#A03473] hover:bg-[#A03473]/10': currentPage !== (i + 1)
-        }"
-      >
-        {{ i + 1 }}
-      </button>
-    </div>
-  </div>
-     } @placeholder (minimum 500ms) {
-      <!-- Skeleton loader -->
+    <!-- Loading State -->
+    @if (isLoading) {
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         @for (i of [1,2,3]; track i) {
-          <div class="bg-gray-100 rounded-lg overflow-hidden animate-pulse">
+          <div class="bg-white rounded-lg overflow-hidden shadow-sm animate-pulse">
             <div class="h-48 bg-gray-200"></div>
             <div class="p-4">
               <div class="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
@@ -58,26 +36,65 @@
             </div>
           </div>
         }
-      </div>
-    } @loading (minimum 1s) {
-      <!-- Transition entre skeleton et vrai contenu -->
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        @for (i of [1,2,3]; track i) {
-          <div class="bg-gray-100 rounded-lg overflow-hidden animate-pulse">
-            <div class="h-48 bg-gray-200"></div>
-            <div class="p-4">
-              <div class="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
-              <div class="h-4 bg-gray-200 rounded w-1/2 mb-3"></div>
-              <div class="h-4 bg-gray-200 rounded w-full mb-1"></div>
-              <div class="h-4 bg-gray-200 rounded w-5/6"></div>
-            </div>
-          </div>
-        }
-      </div>
-    } @error {
-      <div class="text-center py-8 text-red-500">
-        Impossible de charger les événements
       </div>
     }
+
+    <!-- Error State -->
+    @if (!isLoading && hasError) {
+      <div class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+        <p class="text-red-600 mb-4">Impossible de charger les événements</p>
+        <button 
+          (click)="loadEvents()" 
+          class="px-4 py-2 bg-[#A03473] text-white rounded hover:bg-[#88175a]"
+        >
+          Réessayer
+        </button>
+      </div>
+    }
+
+    <!-- Empty State -->
+    @if (!isLoading && !hasError && filteredEvents.length === 0) {
+      <div class="bg-white border border-gray-200 rounded-lg p-8 text-center">
+        <div class="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+          <span class="text-3xl text-gray-400">🔍</span>
+        </div>
+        @if (searchTerm) {
+          <h3 class="text-xl font-medium text-gray-700 mb-2">Aucun résultat trouvé</h3>
+          <p class="text-gray-500 mb-4">Essayez avec d'autres termes de recherche</p>
+        } @else {
+          <h3 class="text-xl font-medium text-gray-700 mb-2">Aucun événement disponible</h3>
+          <p class="text-gray-500 mb-4">Revenez plus tard pour découvrir nos événements</p>
+        }
+      </div>
+    }
+
+    <!-- Success State -->
+    @if (!isLoading && !hasError && filteredEvents.length > 0) {
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @for (event of paginatedEvents; track event.id) {
+          <app-event [event]="event"></app-event>
+        }
+      </div>
+
+      <!-- Pagination -->
+      @if (totalPages > 1) {
+        <div class="flex justify-center mt-8 space-x-2">
+          @for (page of [].constructor(totalPages); track page; let i = $index) {
+            <button
+              (click)="changePage(i + 1)"
+              [disabled]="currentPage === (i + 1)"
+              class="px-3 py-1 rounded-full border text-sm font-medium transition-all duration-200"
+              [ngClass]="{
+                'bg-[#A03473] text-white border-[#A03473]': currentPage === (i + 1),
+                'bg-white text-[#A03473] border-[#A03473] hover:bg-[#A03473]/10': currentPage !== (i + 1)
+              }"
+            >
+              {{ i + 1 }}
+            </button>
+          }
+        </div>
+      }
+    }
+  </div>
 </section>
  

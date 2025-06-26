@@ -1,31 +1,55 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import { EventType } from '../../models/event';
 import { EventService } from '../services/event.service';
-import { NgClass, NgFor, NgIf } from '@angular/common';
+import { NgClass} from '@angular/common';
 import { EventComponent } from '../event/event.component';
 import { FormsModule } from '@angular/forms';
 
 
 @Component({
   selector: 'app-event-list',
-  imports: [NgFor, EventComponent, FormsModule, NgClass, NgIf],
+  imports: [EventComponent, FormsModule, NgClass],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './event-list.component.html',
   styleUrl: './event-list.component.css'
 })
 export class EventListComponent {
   events: EventType[] = [];
-  searchTerm: string = '';
+  private _searchTerm: string = '';
    // pagination
   currentPage = 1;
   itemsPerPage = 6;
+  isLoading = true;
+  hasError = false;
 
 
   constructor(private eventService: EventService) {}
 
   ngOnInit(): void {
-    this.eventService.getAllEvents().subscribe((data) => {
-      this.events = data;
+    this.loadEvents();
+  }
+  
+  get searchTerm(): string {
+    return this._searchTerm;
+  }
+
+  set searchTerm(value: string) {
+    this._searchTerm = value;
+    this.currentPage = 1; // Réinitialise à la première page lors d'une nouvelle recherche
+  }
+  loadEvents() {
+    this.isLoading = true;
+    this.hasError = false;
+    
+    this.eventService.getAllEvents().subscribe({
+      next: (data) => {
+        this.events = data;
+        this.isLoading = false;
+      },
+      error: () => {
+        this.isLoading = false;
+        this.hasError = true;
+      }
     });
   }
 

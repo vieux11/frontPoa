@@ -7,3 +7,21 @@ input.ng-invalid.ng-touched, textarea.ng-invalid.ng-touched {
   border-color: #ef4444; /* Rouge Tailwind */
 }
 
+/* Pour le champ fichier personnalisé */
+.relative {
+  position: relative;
+}
+.absolute {
+  position: absolute;
+}
+.opacity-0 {
+  opacity: 0;
+}
+.cursor-pointer {
+  cursor: pointer;
+}
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

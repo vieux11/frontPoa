@@ -10,7 +10,7 @@ import { ReservationSummary } from '../../models/event';
 })
 export class ReservationService {
 
-  private apiUrl = 'https://poaevent-back.onrender.com'; // à adapter si besoin
+  private apiUrl = 'http://127.0.0.1:3333'; // à adapter si besoin
 
   constructor(private http: HttpClient, private auth:AuthService) {}
 

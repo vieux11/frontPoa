@@ -1,15 +1,9 @@
-
-
-<main class="main">
-  <app-header></app-header>
-</main>
-
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * The content above * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * * -->
-<!-- * * * * * * * * * * and can be replaced.  * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * End of Placeholder  * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-
-<router-outlet />
+<div class="flex flex-col min-h-screen">
+  <!-- Header fixe -->
+  <app-header class="fixed top-0 left-0 right-0 z-50"></app-header>
+  
+  <!-- Contenu principal avec marge pour compenser le header -->
+  <main class="flex-grow mt-[60px]">
+    <router-outlet></router-outlet>
+  </main>
+</div>

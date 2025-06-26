@@ -1,15 +1,15 @@
 <div class="p-6 max-w-5xl mx-auto">
-  <h2 class="text-2xl font-semibold text-primary mb-6">Tableau de bord des réservations</h2>
+  <h2 class="text-3xl font-bold text-[#A03473]">Tableau de bord des réservations</h2>
 
   <!-- Sélecteur d'événement -->
-  <div class="mb-6">
-    <label class="text-sm font-medium text-gray-700 mb-2 block">Sélectionnez un événement :</label>
-    <select [(ngModel)]="selectedEventId" (change)="onSelectEvent()"
-            class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
-      <option value="" disabled selected>-- Choisir un événement --</option>
-      <option *ngFor="let event of events" [value]="event.id">{{ event.title }}</option>
-    </select>
-  </div>
+<div class="py-2.5 mb-6">
+  <label class="text-sm font-medium text-gray-700 mb-2 block">Sélectionnez un événement :</label>
+  <select [(ngModel)]="selectedEventId" (change)="onSelectEvent()"
+          class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#A03473] focus:border-transparent hover:border-[#A03473]">
+    <option value="" disabled selected>-- Choisir un événement --</option>
+    <option *ngFor="let event of events" [value]="event.id" class="hover:bg-[#A03473] hover:text-white">{{ event.title }}</option>
+  </select>
+</div>
 
   <!-- Dashboard -->
   <div *ngIf="dashboardData">

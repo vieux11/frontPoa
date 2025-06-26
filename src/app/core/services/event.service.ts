@@ -1,30 +1,40 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
-import { Observable } from 'rxjs';
-import { EventType } from '../../models/event';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { EventType, EventTypeSend } from '../../models/event';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EventService {
 
-  private baseUrl = 'https://poaevent-back.onrender.com' //  backend
+  private baseUrl = 'http://127.0.0.1:3333' //  backend
  
 
 
   constructor(private http: HttpClient) {}
 
   // Créer un événement (admin uniquement)
-  createEvent(data: Event): Observable<EventType> {
-  const  tokenBearer = localStorage.getItem('token') || null;
-    return this.http.post<EventType>(`${this.baseUrl}/createEvent`, data, 
-      {
-        headers: {
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': `Bearer ${tokenBearer}`
-        }
-      }
-    )
+  createEvent(data: FormData | EventTypeSend): Observable<EventTypeSend> {
+  const tokenBearer = localStorage.getItem('token') || '';
+  
+  let headers = new HttpHeaders({
+    'Authorization': `Bearer ${tokenBearer}`
+  });
+
+  // Si c'est FormData, ne pas mettre Content-Type (le navigateur l'ajoutera automatiquement)
+  if (!(data instanceof FormData)) {
+    headers = headers.set('Content-Type', 'application/json');
+  }
+
+  return this.http.post<EventTypeSend>(`${this.baseUrl}/createEvent`, data, { headers })
+    .pipe(
+      catchError(error => {
+        console.error('Erreur détaillée:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
   // Obtenir tous les événements

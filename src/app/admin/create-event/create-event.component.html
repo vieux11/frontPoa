@@ -128,23 +128,36 @@
       }
     </div>
 
-    <!-- Image URL -->
+    <!-- Image -->
     <div class="mb-4">
-      <label class="block text-gray-700">Image (URL)</label>
-      <input 
-        type="text" 
-        formControlName="image" 
-        class="w-full border border-[#A03473] p-2 rounded mt-1"
-        [class.border-red-500]="eventForm.get('image')?.invalid && eventForm.get('image')?.touched"
-      />
-      @if (eventForm.get('image')?.invalid && eventForm.get('image')?.touched) {
-        <div class="text-red-500 text-sm mt-1">
-          @if (eventForm.get('image')?.errors?.['required']) {
-            <p>URL image requis.</p>
-          }
+        <label class="block text-gray-700">Image</label>
+        <div class="relative">
+          <input 
+            type="file" 
+            (change)="onFileSelected($event)"
+            accept="image/*"
+            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            #fileInput
+          />
+          <div class="flex items-center border border-[#A03473] rounded p-2">
+            <span class="flex-1 truncate">
+              {{ fileName || 'Sélectionner une image' }}
+            </span>
+            <button 
+              type="button" 
+              class="ml-2 px-2 py-1 bg-gray-100 rounded hover:bg-gray-200"
+              (click)="fileInput.click()"
+            >
+              Parcourir
+            </button>
+          </div>
         </div>
-      }
-    </div>
+        @if (imageError) {
+          <div class="text-red-500 text-sm mt-1">
+            {{ imageError }}
+          </div>
+        }
+      </div>
 
     <button 
       type="submit" 
