@@ -2,13 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { User, UserLogin } from '../../models/user';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private baseUrl = 'http://127.0.0.1:3333';
+  private baseUrl = environment.apiUrl;
 
   // Signals réactifs
   isConnected = signal<boolean>(false);

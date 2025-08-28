@@ -3,17 +3,44 @@ import { Injectable, signal } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { EventType, EventTypeSend } from '../../models/event';
+import { WebsocketService } from './websocket.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EventService {
 
-  private baseUrl = 'http://127.0.0.1:3333' //  backend
- 
+  private baseUrl = environment.apiUrl //  backend
+  // Map pour stocker les places restantes par eventId
+  private remainingSeatsMap = new Map<number, number>();
+ // Signal pour notifier les changements
+  public remainingSeatsUpdated = signal<{eventId: number, seats: number} | null>(null);
 
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private webSocketService: WebsocketService) {
+    this.setupWebSocketListeners();
+  }
+  private setupWebSocketListeners() {
+    // Écouter les mises à jour de réservation
+    this.webSocketService.onReservationCreated((data) => {
+      console.log('Reservation created:', data);
+      if (data.eventId && data.remainingSeats !== undefined) {
+        this.remainingSeatsMap.set(data.eventId, data.remainingSeats);
+        this.remainingSeatsUpdated.set({eventId: data.eventId, seats: data.remainingSeats});
+      }
+    });
+  }
+   
+  // Rejoindre la room WebSocket pour un événement
+  joinEventRoom(eventId: number) {
+    this.webSocketService.joinEventRoom(eventId);
+  }
+
+  // Quitter la room WebSocket
+  leaveEventRoom(eventId: number) {
+    this.webSocketService.leaveEventRoom(eventId);
+  }
 
   // Créer un événement (admin uniquement)
   createEvent(data: FormData | EventTypeSend): Observable<EventTypeSend> {
@@ -71,5 +98,9 @@ export class EventService {
         }
       }
     );
+  }
+  // Getter pour les places restantes
+  getRemainingSeats(eventId: number): number | undefined {
+    return this.remainingSeatsMap.get(eventId);
   }
 }
