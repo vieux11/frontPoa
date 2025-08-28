@@ -6,7 +6,6 @@ import { EventType } from '../models/event';
 import { NgFor } from '@angular/common';
 import { EventComponent } from '../core/event/event.component';
 import { FooterComponent } from '../shared/footer/footer.component';
-
 @Component({
   selector: 'app-home',
   imports: [EventComponent, RouterLink, FooterComponent],

@@ -1,20 +1,23 @@
 <!-- Hero Section -->
-<section class="bg-gradient-to-r from-[#A03473] to-[#88175a]  text-white py-20 ">
+<section class="bg-gradient-to-r from-[#A03473] to-[#88175a] text-white py-12 md:py-20">
     <div class="poa-container max-w-4xl mx-auto px-4">
-      <h1 class="text-4xl md:text-5xl font-bold mb-6">
-        Découvrez et réservez des événements gratuitement
+      <h1 class="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-4 md:mb-6 leading-tight">
+        <span class="block sm:inline">Découvrez et réservez</span>
+        <span class="block sm:inline"> des événements gratuitement</span>
       </h1>
-      <p class="text-xl mb-8">
+      <p class="text-sm sm:text-base md:text-lg lg:text-xl mb-6 md:mb-8 leading-relaxed">
         poaEvent vous permet de trouver et réserver des événements gratuits ou de créer vos propres événements.
       </p>
-      <div class="flex flex-col sm:flex-row gap-4">
+      <div class="flex flex-col sm:flex-row gap-3 md:gap-4">
         <button (click)="handleCreateEvent()"
-          class="bg-white text-[#A03473] hover:bg-gray-100 px-6 py-3 rounded text-lg font-semibold flex items-center justify-center">
-          <ion-icon name="add-circle-outline" class="bi bi-plus-circle me-2"></ion-icon> Créer un événement
+          class="bg-white text-[#A03473] hover:bg-gray-100 px-4 md:px-6 py-2 md:py-3 rounded text-base md:text-lg font-semibold flex items-center justify-center transition-colors">
+          <ion-icon name="add-circle-outline" class="mr-2 text-lg md:text-xl"></ion-icon> 
+          <span class="whitespace-nowrap">Créer un événement</span>
         </button>
         <button [routerLink]="['/events']" routerLinkActive="router-link-active"
-          class="bg-transparent border border-white text-white hover:bg-white/10 px-6 py-3 rounded text-lg font-semibold flex items-center justify-center">
-          <ion-icon name="ticket-outline" class="bi bi-ticket me-2"></ion-icon> Réserver un événement
+          class="bg-transparent border border-white text-white hover:bg-white/10 px-4 md:px-6 py-2 md:py-3 rounded text-base md:text-lg font-semibold flex items-center justify-center transition-colors">
+          <ion-icon name="ticket-outline" class="mr-2 text-lg md:text-xl"></ion-icon> 
+          <span class="whitespace-nowrap">Réserver un événement</span>
         </button>
       </div>
     </div>
@@ -23,13 +26,13 @@
   <!-- Événements à venir -->
   <section class="py-16">
     <div class="max-w-7xl mx-auto px-4">
-      <div class="flex items-center justify-between mb-8">
-        <h2 class="text-3xl font-bold">Événements à venir</h2>
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <h2 class="text-2xl sm:text-3xl font-bold">Événements à venir</h2>
         <button [routerLink]="['/events']" routerLinkActive="router-link-active"
-          class="flex items-center gap-2 text-primary hover:text-white hover:bg-[#A03473] transition px-4 py-2 rounded-lg"
+          class="flex items-center justify-center gap-2 text-primary hover:text-white hover:bg-[#A03473] transition-colors px-4 py-2 rounded-lg w-auto sm:w-auto"
         >
-          <ion-icon name="arrow-forward-circle-outline" class="text-xl"></ion-icon>
-          Voir tous
+          <ion-icon name="arrow-forward-circle-outline" class="text-lg md:text-xl"></ion-icon>
+          <span class="whitespace-nowrap">Voir tous</span>
         </button>
       </div>
   
@@ -92,9 +95,7 @@
       </div>
     }
   </div>
-  
-  
-  
+  </section>
   <!-- Comment ça marche -->
    @defer (on viewport){
   <section class="py-16 bg-gray-50 how-it-works-section">
@@ -138,5 +139,7 @@
 @placeholder {
   <div class="h-[50vh]"></div> <!-- Espace réservé -->
 }
-  <app-footer></app-footer>
+
+<app-footer class="mt-auto"></app-footer>
+  
   
