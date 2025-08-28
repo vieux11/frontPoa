@@ -1,5 +1,5 @@
 import { EventService } from './../services/event.service';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, signal } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, signal, effect, inject } from '@angular/core';
 import { EventType } from '../../models/event';
 import { Router } from '@angular/router';
 import { DatePipe, NgIf } from '@angular/common';
@@ -16,22 +16,39 @@ export class EventComponent {
   @Input() event!: EventType;
   loading = false;
   remainingSeats = signal<number>(0);
+  public eventservice = inject(EventService);
 
-  constructor(private router: Router, public eventservice : EventService, private reservationService: ReservationService) {}
+  constructor(private router: Router, private reservationService: ReservationService) {
+      // Écouter les mises à jour en temps réel
+    effect(() => {
+      const update = this.eventservice.remainingSeatsUpdated();
+      if (update && update.eventId === this.event.id) {
+        this.remainingSeats.set(update.seats);
+      }
+    });
+  }
 
   ngOnInit(): void {
     console.log('EventComponent initialized with event:', this.event);
     if (this.event?.id) {
-      this.eventservice.getStats(this.event.id).subscribe({
-        next: (stats) => {
-          this.remainingSeats.update(value=>value = stats.remainingSeats) ;
-        },
-        error: (err) => {
-          console.error('Erreur lors du chargement des stats :', err);
-        }
-      });
+      // Rejoindre la room WebSocket
+      this.eventservice.joinEventRoom(this.event.id);
+      // Charger les stats initiales
+      this.loadInitialStats();
+    
     }
   }
+  private loadInitialStats() {
+    this.eventservice.getStats(this.event.id).subscribe({
+      next: (stats) => {
+        this.remainingSeats.set(stats.remainingSeats);
+      },
+      error: (err) => {
+        console.error('Erreur lors du chargement des stats :', err);
+      }
+    });
+  }
+
   handleReservation(): void {
     if (!this.event || !this.event.id) return;
 
@@ -53,5 +70,10 @@ export class EventComponent {
         }
       },
     });
+  }
+  ngOnDestroy(): void {
+    if (this.event?.id) {
+      this.eventservice.leaveEventRoom(this.event.id);
+    }
   }
 }
