@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { EventService } from '../../core/services/event.service';
 import { Router } from '@angular/router';
-
+import { ToastService } from '../../core/services/toast.service';
 
 @Component({
   selector: 'app-create-event',
@@ -16,7 +16,8 @@ export class CreateEventComponent {
   apiError = '';
   selectedFile: File | null = null;
   imageError: string | null = null;
-  fileName: string = ''; // Nouvelle propriété pour stocker le nom du fichier
+  fileName: string = '';
+  isLoading = false;
 
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -26,7 +27,7 @@ export class CreateEventComponent {
     
     if (input.files && input.files.length > 0) {
       this.selectedFile = input.files[0];
-      this.fileName = this.selectedFile.name; // Stocke le nom du fichier
+      this.fileName = this.selectedFile.name;
       
       // Validation du fichier
       const ext = this.selectedFile.name.split('.').pop()?.toLowerCase();
@@ -48,7 +49,8 @@ export class CreateEventComponent {
   constructor(
     private fb: FormBuilder,
     private eventService: EventService,
-    private router: Router
+    private router: Router,
+    private toastService: ToastService
   ) {
     this.eventForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(5)]],
@@ -61,66 +63,94 @@ export class CreateEventComponent {
     });
   }
 
-  // Validateur custom : Date future
   futureDateValidator(control: AbstractControl): ValidationErrors | null {
-    if (!control.value) return null;
     const selectedDate = new Date(control.value);
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     return selectedDate < today ? { pastDate: true } : null;
   }
 
-  // Validateur custom : URL optionnelle mais valide si renseignée
   handleSubmit() {
-  this.eventForm.markAllAsTouched();
-  
-  // Vérification uniquement sur les champs non-fichiers
-  if (this.eventForm.invalid) {
-    console.log('Erreurs dans le formulaire:', this.eventForm.errors);
-    return;
-  }
-
-  if (!this.selectedFile) {
-    this.imageError = 'Veuillez sélectionner une image';
-    return;
-  }
-
-  const formValues = this.eventForm.value;
-  // Crée une date en UTC pour éviter le décalage
-  const dateStr = `${formValues.eventDate}T${formValues.heure}:00Z`;
-  const dateObj = new Date(dateStr);
-  const fullDatetime = dateObj.toISOString().replace('.000Z', '');
-
-  const formData = new FormData();
-  formData.append('image', this.selectedFile);
-  formData.append('title', formValues.title);
-  formData.append('description', formValues.description);
-  formData.append('location', formValues.location);
-  formData.append('eventDate', formValues.eventDate);
-  formData.append('heure', fullDatetime);
-  formData.append('maxParticipants', formValues.maxParticipants.toString());
-
-  console.log('Envoi des données:', {
-    title: formValues.title,
-    description: formValues.description,
-    location: formValues.location,
-    eventDate: formValues.eventDate,
-    heure: fullDatetime,
-    maxParticipants: formValues.maxParticipants,
-    file: this.selectedFile.name
-  });
-  console.log('Heure originale:', formValues.heure);
-  console.log('DateTime complète:', fullDatetime);
-  this.eventService.createEvent(formData).subscribe({
-    next: () => {
-      this.router.navigate(['/admin']);
-    },
-    error: (err) => {
-      console.error('Erreur API:', err);
-      this.apiError = err.error?.message || 'Erreur lors de la création';
-      this.submitted = true;
+    this.eventForm.markAllAsTouched();
+    
+    // Vérification uniquement sur les champs non-fichiers
+    if (this.eventForm.invalid) {
+      console.log('Erreurs dans le formulaire:', this.eventForm.errors);
+      return;
     }
-  });
-}
+
+    if (!this.selectedFile) {
+      this.imageError = 'Veuillez sélectionner une image';
+      this.toastService.warning('Veuillez sélectionner une image pour votre événement');
+      return;
+    }
+
+    this.isLoading = true;
+    this.submitted = false;
+    this.apiError = '';
+
+    const formValues = this.eventForm.value;
+    // Crée une date en UTC pour éviter le décalage
+    const dateStr = `${formValues.eventDate}T${formValues.heure}:00Z`;
+    const dateObj = new Date(dateStr);
+    const fullDatetime = dateObj.toISOString().replace('.000Z', '');
+
+    const formData = new FormData();
+    formData.append('image', this.selectedFile);
+    formData.append('title', formValues.title);
+    formData.append('description', formValues.description);
+    formData.append('location', formValues.location);
+    formData.append('eventDate', formValues.eventDate);
+    formData.append('heure', fullDatetime);
+    formData.append('maxParticipants', formValues.maxParticipants.toString());
+
+    console.log('Envoi des données:', {
+      title: formValues.title,
+      description: formValues.description,
+      location: formValues.location,
+      eventDate: formValues.eventDate,
+      heure: fullDatetime,
+      maxParticipants: formValues.maxParticipants,
+      file: this.selectedFile.name
+    });
+    console.log('Heure originale:', formValues.heure);
+    console.log('DateTime complète:', fullDatetime);
+    
+    this.eventService.createEvent(formData).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.toastService.success('Événement créé avec succès ! Redirection vers le tableau de bord...', 2000);
+        setTimeout(() => {
+          this.router.navigate(['/admin']);
+        }, 2000);
+      },
+      error: (err) => {
+        this.isLoading = false;
+        console.error('Erreur API:', err);
+        
+        let errorMessage = 'Erreur lors de la création de l\'événement';
+        
+        if (err.status === 400) {
+          errorMessage = 'Données invalides. Veuillez vérifier les informations saisies.';
+        } else if (err.status === 401) {
+          errorMessage = 'Session expirée. Veuillez vous reconnecter.';
+          this.router.navigate(['/login']);
+        } else if (err.status === 403) {
+          errorMessage = 'Vous n\'avez pas les permissions pour créer un événement.';
+        } else if (err.status === 0 || err.status >= 500) {
+          errorMessage = 'Problème de connexion au serveur. Veuillez réessayer plus tard.';
+        } else if (err.error?.message) {
+          errorMessage = err.error.message;
+        }
+        
+        this.apiError = errorMessage;
+        this.submitted = true;
+        this.toastService.error(errorMessage);
+      }
+    });
+  }
+
   closeError() {
     this.apiError = '';
     this.submitted = false;

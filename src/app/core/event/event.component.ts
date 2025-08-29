@@ -4,6 +4,8 @@ import { EventType } from '../../models/event';
 import { Router } from '@angular/router';
 import { DatePipe, NgIf } from '@angular/common';
 import { ReservationService } from '../services/reservation.service';
+import { AuthService } from '../services/auth.service';
+import { ToastService } from '../services/toast.service';
 
 @Component({
   selector: 'app-event',
@@ -18,7 +20,12 @@ export class EventComponent {
   remainingSeats = signal<number>(0);
   public eventservice = inject(EventService);
 
-  constructor(private router: Router, private reservationService: ReservationService) {
+  constructor(
+    private router: Router, 
+    private reservationService: ReservationService,
+    private authService: AuthService,
+    private toastService: ToastService
+  ) {
       // Écouter les mises à jour en temps réel
     effect(() => {
       const update = this.eventservice.remainingSeatsUpdated();
@@ -52,21 +59,39 @@ export class EventComponent {
   handleReservation(): void {
     if (!this.event || !this.event.id) return;
 
+    // Vérifier si l'utilisateur est connecté
+    if (!this.authService.isAuthenticated()) {
+      this.toastService.warning('Vous devez être connecté pour réserver un événement');
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    // Vérifier si l'utilisateur est un client
+    if (this.authService.getRole() !== 'client') {
+      this.toastService.error('Seuls les clients peuvent réserver des événements');
+      return;
+    }
+
     this.loading = true;
 
     this.reservationService.createReservation(this.event.id).subscribe({
       next: (res) => {
         this.loading = false;
-        alert('Réservation réussie !');
-        this.router.navigate(['/client']);
+        this.toastService.success('Réservation réussie ! Redirection vers votre tableau de bord...');
+        setTimeout(() => {
+          this.router.navigate(['/client']);
+        }, 2000);
       },
       error: (err) => {
         this.loading = false;
         if (err.status === 400) {
-          alert(err.error.message || 'Impossible de réserver.');
+          this.toastService.error(err.error.message || 'Impossible de réserver cet événement');
+        } else if (err.status === 401) {
+          this.toastService.error('Session expirée. Veuillez vous reconnecter');
+          this.router.navigate(['/login']);
         } else {
           console.error(err);
-          alert(err.error.message);
+          this.toastService.error('Erreur lors de la réservation. Veuillez réessayer');
         }
       },
     });

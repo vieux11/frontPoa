@@ -6,6 +6,8 @@ import { EventType } from '../models/event';
 import { NgFor } from '@angular/common';
 import { EventComponent } from '../core/event/event.component';
 import { FooterComponent } from '../shared/footer/footer.component';
+import { ToastService } from '../core/services/toast.service';
+
 @Component({
   selector: 'app-home',
   imports: [EventComponent, RouterLink, FooterComponent],
@@ -17,10 +19,18 @@ export class HomeComponent {
   latestEvents: EventType[] = [];
   isLoading = true;
   hasError = false;
-  constructor(public authService: AuthService, private router: Router, public eventservice:EventService) {}
+  
+  constructor(
+    public authService: AuthService, 
+    private router: Router, 
+    public eventservice: EventService,
+    private toastService: ToastService
+  ) {}
+
   ngOnInit(): void {
     this.loadEvents();
   }
+
   loadEvents() {
     this.isLoading = true;
     this.hasError = false;
@@ -38,18 +48,20 @@ export class HomeComponent {
       }
     });
   }
+
   handleCreateEvent() {
     const isAuth = this.authService.isAuthenticated();
     const role = this.authService.getRole();
 
     if (!isAuth) {
+      this.toastService.warning('Vous devez être connecté pour créer un événement');
       this.router.navigate(['/login']);
       return;
     } else if (role === 'admin') {
       this.router.navigate(['/creer-event']);
     }
     else {
-      // rôle inconnu ou comportement par défaut
+      this.toastService.error('Seuls les administrateurs peuvent créer des événements');
       this.router.navigate(['/login']);
     }
   }
@@ -59,16 +71,18 @@ export class HomeComponent {
     const role = this.authService.getRole();
 
     if (!isAuth) {
+      this.toastService.warning('Vous devez être connecté pour réserver des événements');
       this.router.navigate(['/login'], {
         state: { from: { pathname: '/client/events' } },
       });
     } else if (role === 'client') {
       this.router.navigate(['/client/events']);
+    } else {
+      this.toastService.error('Seuls les clients peuvent réserver des événements');
     }
   }
 
   goToClientEvents() {
     this.router.navigate(['/client/events']);
   }
-
 }

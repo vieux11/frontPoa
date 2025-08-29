@@ -161,9 +161,15 @@
 
     <button 
       type="submit" 
-      class="w-full bg-[#A03473] text-white py-2 rounded hover:bg-[#88175a] transition cursor-pointer"
+      class="w-full bg-[#A03473] text-white py-2 rounded hover:bg-[#88175a] transition cursor-pointer flex items-center justify-center"
+      [disabled]="eventForm.invalid || isLoading"
     >
-      Créer l’événement
+      @if (isLoading) {
+        <span class="mr-2">⏳</span>
+        Création en cours...
+      } @else {
+        Créer l'événement
+      }
     </button>
   </form>
 </div>
