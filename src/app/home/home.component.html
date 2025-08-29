@@ -26,13 +26,13 @@
   <!-- Événements à venir -->
   <section class="py-16">
     <div class="max-w-7xl mx-auto px-4">
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+      <div class="flex items-center justify-between gap-4 mb-8">
         <h2 class="text-2xl sm:text-3xl font-bold">Événements à venir</h2>
         <button [routerLink]="['/events']" routerLinkActive="router-link-active"
           class="flex items-center justify-center gap-2 text-primary hover:text-white hover:bg-[#A03473] transition-colors px-4 py-2 rounded-lg w-auto sm:w-auto"
         >
           <ion-icon name="arrow-forward-circle-outline" class="text-lg md:text-xl"></ion-icon>
-          <span class="whitespace-nowrap">Voir tous</span>
+          <span class="whitespace-nowrap hidden sm:inline">Voir tous</span>
         </button>
       </div>
   
