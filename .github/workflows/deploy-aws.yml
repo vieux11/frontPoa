@@ -1,0 +1,67 @@
+name: Deploy to AWS Beanstalk
+
+on:
+  push:
+    branches:
+      - aws-deploy   # se déclenche quand une PR vers cette branche est ouverte depuis main
+
+jobs:
+  build-and-deploy-aws:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout du code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. Configurer AWS credentials (via secrets GitHub)
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1   # adapte ta région
+
+      # 3. Login à ECR (Elastic Container Registry)
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # 4. Construire et pousser l’image Docker sur ECR
+      - name: Build and push Docker image
+        run: |
+          IMAGE_REPO="${{ secrets.ECR_REPOSITORY }}"
+          IMAGE_TAG="${{ github.sha }}"
+          docker build -t $IMAGE_REPO:$IMAGE_TAG .
+          docker push $IMAGE_REPO:$IMAGE_TAG
+          echo "IMAGE=$IMAGE_REPO:$IMAGE_TAG" >> $GITHUB_ENV
+
+      # 5. Préparer Dockerrun.aws.json pour Beanstalk
+      - name: Generate Dockerrun.aws.json
+        run: |
+          cat > Dockerrun.aws.json <<EOF
+          {
+            "AWSEBDockerrunVersion": "1",
+            "Image": {
+              "Name": "${{ env.IMAGE }}",
+              "Update": "true"
+            },
+            "Ports": [
+              {
+                "ContainerPort": 80
+              }
+            ]
+          }
+          EOF
+
+      # 6. Déployer sur Elastic Beanstalk
+      - name: Deploy to Elastic Beanstalk
+        uses: einaregilsson/beanstalk-deploy@v22
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: "poa"
+          environment_name: "Poa-env"
+          version_label: ${{ github.sha }}
+          region: us-east-1
+          deployment_package: Dockerrun.aws.json
