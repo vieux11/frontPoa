@@ -20,7 +20,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1   # adapte ta région
+          aws-region: us-east-2   # adapte ta région
 
       # 3. Login à ECR (Elastic Container Registry)
       - name: Login to Amazon ECR
@@ -63,5 +63,5 @@ jobs:
           application_name: "poa"
           environment_name: "Poa-env"
           version_label: ${{ github.sha }}
-          region: us-east-1
+          region: us-east-2
           deployment_package: Dockerrun.aws.json
