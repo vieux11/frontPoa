@@ -61,18 +61,17 @@ export class LoginComponent {
         
         // Messages d'erreur plus détaillés et conviviaux
         let errorMessage = 'Une erreur est survenue lors de la connexion';
+        let errortest = err.error?.error;
         
-        if (err.status === 401) {
+        if (err.status === 400) {
           errorMessage = 'Email ou mot de passe incorrect. Veuillez vérifier vos identifiants.';
         } else if (err.status === 404) {
           errorMessage = 'Compte non trouvé. Vérifiez votre email ou créez un nouveau compte.';
         } else if (err.status === 0 || err.status >= 500) {
           errorMessage = 'Problème de connexion au serveur. Veuillez réessayer plus tard.';
-        } else if (err.error?.message) {
-          errorMessage = err.error.message;
-        }
+        } 
         
-        this.apiError = errorMessage;
+        this.apiError = errortest || errorMessage;
         this.toastService.error(errorMessage);
       }
     });
